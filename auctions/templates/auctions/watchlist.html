@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    {% if watchlist_listings %}
+        <div class="listing-row">
+            {% for watchlist_item in watchlist_listings %}
+                <div class="listing-container watchlist-container">
+                    {% if watchlist_item.listing.image_url %}
+                        <img src="{{ watchlist_item.listing.image_url }}" alt="{{ watchlist_item.listing.title }}">
+                    {% endif %}
+                    <div class="listing-title">
+                        <a href="{% url 'listing_page' watchlist_item.listing.id %}">{{ watchlist_item.listing.title }}</a>
+                    </div>
+                    <div class="listing-price">
+                        {% if watchlist_item.listing.current_bid == 0 %}
+                            ${{ watchlist_item.listing.starting_bid|floatformat:"2" }}
+                        {% else %}
+                            ${{ watchlist_item.listing.current_bid }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-listing-container">
+            <p>No listings in watchlist.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% load static %}
+
+    <style>
+        .login-container {
+            background-image: url('{% static "auctions/images/bck-right.png" %}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            min-height: 750px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+        }
+    </style>
+
+    <div class="login-container">
+        <div class="form-container-wide">
+            <h2>Login</h2>
+
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
+
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <input class="btn btn-primary" type="submit" value="Login">
+            </form>
+
+            <p class="text-muted mt-3 link-here">Interested? <a href="{% url 'register' %}">Register here.</a></p>
+        </div>
+        
+    </div>
+
+{% endblock %}

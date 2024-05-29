@@ -1,0 +1,52 @@
+{% extends "auctions/layout.html" %}
+{% load static %} 
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <form method="get" action="" id="category-form">
+        <div class="filter-nav">
+            <div class="filters-container">
+                <ul class="category-filters">
+                    <li><button class="category-filter {% if not category_filter %}active{% endif %}" type="button" data-value="" onclick="filterCategory(this)">All Categories</button></li>
+                    {% for category in categories %}
+                        <li><button class="category-filter {% if category.name == category_filter %}active{% endif %}" type="button" data-value="{{ category.name }}" onclick="filterCategory(this)">{{ category.name }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <input type="hidden" id="category-input" name="category" value="{{ category_filter }}">
+    </form> 
+    <!-- <div class="tabbed-nav">
+        <ul class="unstyled"><li></li></ul>
+    </div> -->
+    
+    <div class="listing-row">
+        {% for listing in active_listings %}
+            <div class="listing-container">
+                {% if listing.image_url %}
+                    <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                {% endif %}
+                <div class="listing-information">
+                    <div class="listing-title"><a href="{% url 'listing_page' listing.id %}">{{ listing.title }}</a></div>
+                    <div class="listing-description">{{ listing.description }}</div>
+                    <div class="listing-price">
+                </div>
+                    {% if listing.current_bid == 0 %}
+                        ${{ listing.starting_bid|floatformat:"2" }}
+                    {% else %}
+                        ${{ listing.current_bid }}
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="no-listing-container">
+                <p>No active listings available.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script src="{% static 'auctions/js/index.js' %}"></script>
+
+{% endblock %}
+

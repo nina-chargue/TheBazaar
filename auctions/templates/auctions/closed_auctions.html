@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Closed Auctions</h2>
+
+    {% if closed_listings %}
+        <div class="listing-row">
+            {% for listing in closed_listings %}
+                
+                    <div class="listing-container watchlist-container">
+                        {% if listing.image_url %}
+                            <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                        {% endif %}
+                        <div class="listing-title">
+                            <a href="{% url 'listing_page' listing.id %}">{{ listing.title }}</a>
+                        </div>
+                        
+                        <div class="listing-price">
+                            <p><b>Sold:</b> ${{ listing.current_bid }}</p>
+                        </div>
+                        <div class="listing-price">
+                            <p><b>Winner:</b> {{ listing.current_bidder.username }}</p>
+                        </div>
+                    </div>
+                    
+            {% endfor %}
+        </div> 
+    {% else %}
+        <div class="no-listing-container">
+            <p>No listings have been closed.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
