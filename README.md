@@ -1,5 +1,5 @@
-# TheBazaar
-This is a website to make auctions of different items where users can bid and comments on the listings and even add to their watchlists
+#  The Bazaar
+A commerce app designed for auctions, where users can create profiles to either list items for auction or bid on others' listings. The app provides a dynamic and interactive platform for users to engage in buying and selling through auctions. Below is a detailed description of the features and functionalities of The Bazaar.
 
 # Encyclopedia Wiki
 This project aims to create a simple wiki platform where users can create, edit, search, and browse encyclopedia entries. It leverages Python's Flask framework for the backend and HTML/CSS for the frontend.
