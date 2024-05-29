@@ -1,13 +1,6 @@
 #  The Bazaar
 A commerce app designed for auctions, where users can create profiles to either list items for auction or bid on others' listings. The app provides a dynamic and interactive platform for users to engage in buying and selling through auctions. Below is a detailed description of the features and functionalities of The Bazaar.
 
-# Encyclopedia Wiki
-This project aims to create a simple wiki platform where users can create, edit, search, and browse encyclopedia entries. It leverages Python's Flask framework for the backend and HTML/CSS for the frontend.
-
-# Google-like Search Engine
-
-This project replicates essential features of Google's search engine using HTML and CSS. It offers a familiar user interface with functionalities such as regular search, image search, and advanced search.
-
 ## Features
 
 - User Authentication
