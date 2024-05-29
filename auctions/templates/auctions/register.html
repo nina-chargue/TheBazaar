@@ -1,0 +1,48 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% load static %}
+
+<style>
+    .register-container {
+        background-image: url('{% static "auctions/images/bck-righ-water.png" %}');
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+        min-height: 750px;
+        display: flex;
+        justify-content: center; 
+        align-items: center;
+    }
+</style>
+
+<div class="register-container">
+    <div class="form-container-wide">
+        <h2>Register</h2>
+
+        {% if message %}
+            <div>{{ message }}</div>
+        {% endif %}
+
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="email" name="email" placeholder="Email Address">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Register">
+        </form>
+
+        <p class="text-muted mt-3 link-here">Already one of us? <a href="{% url 'login' %}">Log In here.</a></p>
+    </div>
+</div>
+
+{% endblock %}

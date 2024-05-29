@@ -1,0 +1,56 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% load static %}
+
+    <style>
+        .new-listing-container {
+            background-image: url('{% static "auctions/images/bck-righ-water.png" %}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            min-height: 750px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+        }
+    </style>
+
+    <div class="new-listing-container">
+        <div class="form-container-wide">
+            <h2>New listing</h2>
+    
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
+    
+            <form action="{% url 'create_listing' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input autofocus class="form-control" type="text" name="title" placeholder="Title">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="description" placeholder="Description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="number" name="starting_bid" placeholder="Starting bid" min="0">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="image_url" placeholder="Image url">
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="category">
+                        <option value="" selected disabled>Select Category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name  }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <input class="btn btn-primary" type="submit" value="Create">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+

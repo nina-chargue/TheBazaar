@@ -1,0 +1,92 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}The Bazaar{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- Font Awesome for icons -->
+    </head>
+    <body>
+        <header>
+            <div class="container text-center">
+                <h1><img class="logo-left" src="{% static 'auctions/images/logo-bazaar.png' %}" alt="Logo" width="32" height="32">The Bazaar<img class="logo-right" src="{% static 'auctions/images/logo-bazaar.png' %}" alt="Logo" width="32" height="32"></h1>
+            </div>
+        </header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <div class="navbar-brand">
+                    {% if user.is_authenticated %}
+                        Welcome {{ user.username }}.
+                    {% else %}
+                        Welcome stranger.
+                    {% endif %}
+                </div>
+                <!-- <a class="navbar-brand" href="#">add icon</a> -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'index' %}">Store</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'create_listing' %}">Sell</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'show_watchlist' %}">Watchlist</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'show_closed_auctions' %}">Closed</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                            </li>
+                            <!-- <li><a href="{% url 'login' %}">
+                                <img src="{% static 'auctions/images/logout.png' %}" alt="Profile" width="32" height="32"></a>
+                            </li> -->
+                            <!-- Login icon -->
+                            <li class="nav-item-right">
+                                <a href="{% url 'user_profile' request.user.id %}">
+                                    <img src="{% static 'auctions/images/dark-racoon.png' %}" alt="Profile" width="32" height="32">
+                                </a>
+                            </li>
+                            
+                        {% else %}
+                            <li class="nav-item-right"><a href="{% url 'login' %}">
+                                <img src="{% static 'auctions/images/ligh-racoon.png' %}" alt="Profile" width="32" height="32"></a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">Register</a>
+                            </li> -->
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            {% if user.is_authenticated %}
+                <!-- Signed in message -->
+            {% else %}
+                <!-- Not signed in message -->
+            {% endif %}
+            <hr>
+            {% block body %}
+            {% endblock %}
+        </div>
+        <footer>
+            
+        </footer>
+    
+        <!-- jQuery and Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-EZFFiFOk9HxA6jw0K8Zc/oa/wFas+F8NlljsUz0r1CBZQwDcRAv79DZNJZb2ZzJw" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    </body>
+</html>
