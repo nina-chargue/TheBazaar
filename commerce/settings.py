@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT+6'
 
 USE_I18N = True
 
@@ -133,7 +133,11 @@ STATIC_URL = '/static/'
 
 # Added setting for Azure deployment
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 CSRF_TRUSTED_ORIGINS = [
     'https://the-bazaar.azurewebsites.net',
 ]
