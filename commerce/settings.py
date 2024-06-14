@@ -82,7 +82,7 @@ DATABASES = {
 
         # AZURE DB CONNECTION
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django",
+        "NAME": "postgres",
         "USER": "nina_chargue",
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": "the-bazaar-bd.postgres.database.azure.com",
