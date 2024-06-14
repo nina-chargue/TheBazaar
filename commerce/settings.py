@@ -77,17 +77,17 @@ WSGI_APPLICATION = 'commerce.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 
         # AZURE DB
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "nina_chargue",
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": "the-bazaar-bd.postgres.database.azure.com",
-        "PORT": "5432",
-        "OPTIONS":{"sslmode": "require"},
+        # "ENGINE": "django.db.backends.postgresql",
+        # "NAME": "postgres",
+        # "USER": "nina_chargue",
+        # "PASSWORD": os.getenv("DB_PASSWORD"),
+        # "HOST": "the-bazaar-bd.postgres.database.azure.com",
+        # "PORT": "5432",
+        # "OPTIONS":{"sslmode": "require"},
     }
 }
 
@@ -135,7 +135,10 @@ STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 CSRF_TRUSTED_ORIGINS = [
