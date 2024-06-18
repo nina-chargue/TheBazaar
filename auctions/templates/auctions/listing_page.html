@@ -25,9 +25,9 @@
             </div>
         </div>
 
-        {% if listing.image_url %}
+        {% if listing.image %}
             <div class="image_container">
-                <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
             </div>
         {% endif %}
         

@@ -92,17 +92,18 @@ def create_listing(request):
         # Convert starting_bid to Decimal
         starting_bid = convert_to_decimal(request.POST.get('starting_bid'))
         
-        category_name = request.POST.get('category')
-        image_url = request.POST.get('image_url')
+        category_id = request.POST.get('category')
+        image = request.FILES.get('image')
 
         if starting_bid is None:
             return render(request, "auctions/create_listing.html", {
-                "message": "Invalid starting bid."
+                "message": "Invalid starting bid.",
+                "categories": categories
             })
 
         try:
-            # Get the Category object based on its name
-            category = Category.objects.get(name=category_name)
+            # Get the Category object based on its ID
+            category = Category.objects.get(id=category_id)
 
             # Create a new AuctionListing object
             listing = AuctionListing.objects.create(
@@ -110,13 +111,14 @@ def create_listing(request):
                 description=description,
                 starting_bid=starting_bid,
                 category=category,
-                image_url=image_url,
+                image=image,
                 creator=request.user
             )
             listing.save()
         except IntegrityError:
             return render(request, "auctions/create_listing.html", {
-                "message": "Title already taken."
+                "message": "Title already taken.",
+                "categories": categories
             })
         return redirect('index')
 

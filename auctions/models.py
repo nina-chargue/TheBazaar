@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from commerce.settings import STATE_CHOICES
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
@@ -20,7 +21,7 @@ class AuctionListing(models.Model):
     description = models.TextField()
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    image_url = models.URLField(blank=True, null=True)
+    image = CloudinaryField('image', default='path/to/placeholder/image.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='listings', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings')
