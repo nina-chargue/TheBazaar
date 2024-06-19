@@ -21,7 +21,6 @@ class AuctionListing(models.Model):
     description = models.TextField()
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    image = CloudinaryField('image', default='path/to/placeholder/image.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='listings', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings')
@@ -30,6 +29,11 @@ class AuctionListing(models.Model):
 
     def __str__(self):
         return self.title
+
+# AuctionImage class
+class AuctionImage(models.Model):
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name='images')
+    image = CloudinaryField('image')
 
 # bids class
 class Bid(models.Model):
