@@ -88,3 +88,4 @@ dmypy.json
 
 # VS Code
 .vscode/
+*.pyc
