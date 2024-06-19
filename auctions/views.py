@@ -5,12 +5,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
-from .models import User, AuctionListing, Bid, Comment, Category, Watchlist
+from .models import AuctionImage, User, AuctionListing, Bid, Comment, Category, Watchlist
 from decimal import Decimal, DecimalException, InvalidOperation
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-
+import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 def index(request):
     categories = Category.objects.all()
@@ -84,6 +87,13 @@ def convert_to_decimal(value):
 def create_listing(request):
     categories = Category.objects.all()
 
+    # Explicitly configure Cloudinary
+    cloudinary.config(
+        cloud_name=os.getenv('CLOUD_NAME'),
+        api_key=os.getenv('API_KEY'),
+        api_secret=os.getenv('API_SECRET')
+    )
+
     if request.method == 'POST':
         # Extract form data from the request
         title = request.POST.get('title')
@@ -93,11 +103,11 @@ def create_listing(request):
         starting_bid = convert_to_decimal(request.POST.get('starting_bid'))
         
         category_id = request.POST.get('category')
-        image = request.FILES.get('image')
+        images = request.FILES.getlist('images')
 
-        if starting_bid is None:
+        if not title or not description or starting_bid is None or not category_id:
             return render(request, "auctions/create_listing.html", {
-                "message": "Invalid starting bid.",
+                "message": "Please fill out all required fields.",
                 "categories": categories
             })
 
@@ -111,15 +121,25 @@ def create_listing(request):
                 description=description,
                 starting_bid=starting_bid,
                 category=category,
-                image=image,
                 creator=request.user
             )
-            listing.save()
+
+            # Save each image to Cloudinary
+            for image in images:
+                upload_result = cloudinary.uploader.upload(image)
+                AuctionImage.objects.create(listing=listing, image=upload_result['secure_url'])
+
         except IntegrityError:
             return render(request, "auctions/create_listing.html", {
                 "message": "Title already taken.",
                 "categories": categories
             })
+        except Category.DoesNotExist:
+            return render(request, "auctions/create_listing.html", {
+                "message": "Selected category does not exist.",
+                "categories": categories
+            })
+        
         return redirect('index')
 
     return render(request, 'auctions/create_listing.html', {'categories': categories})
