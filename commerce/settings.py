@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'cloudinary',
     'cloudinary_storage',
 ]
@@ -139,15 +140,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Added setting for Azure deployment
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 # STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Added setting for Azure deployment
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://the-bazaar.azurewebsites.net',
@@ -161,6 +163,12 @@ STATE_CHOICES = [
     ('Sold', 'Sold'),
     # Add more choices as needed
 ]
+
+cloudinary.config( 
+    cloud_name = os.getenv("CLOUD_NAME"), 
+    api_key = os.getenv("API_KEY"), 
+    api_secret = os.getenv("API_SECRET") 
+)
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv("CLOUD_NAME"),

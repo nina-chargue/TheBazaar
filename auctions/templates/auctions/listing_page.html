@@ -1,13 +1,27 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div class="listing_information">
+        {% if user.is_authenticated %}
+            {% if user == listing.creator %}
+                <div class="right-side-container">
+                    <div class="small-button">
+                        <form action="{% url 'edit_listing' listing_id=listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                            <input class="btn btn-primary" type="submit" value="Edit Listing">
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         <div class="left-side-container">
             <div class="listing-title">{{ listing.title }}</div>
             <div class="listing-description">{{ listing.description }}</div>
             {% if user.is_authenticated %}
                 <div class="small-button">
-                    <form action="{% if in_watchlist %}{% url 'remove_from_watchlist' listing_id=listing.id %}{% else %}{% url 'add_to_watchlist' listing_id=listing.id %}{% endif %}" method="post">
+                    <form action="{% if in_watchlist %}{% url 'remove_from_watchlist' listing_id=listing.id %}{% else %}{% url 'add_to_watchlist' listing_id=listing.id %}{% endif %}" method="post"> 
                         {% csrf_token %}
                         <input type="hidden" name="listing_id" value="{{ listing.id }}">
                         <input class="btn btn-primary" type="submit" value="{% if in_watchlist %}{% else %}Add to{% endif %} Watchlist">
@@ -26,24 +40,18 @@
         </div>
 
         {% if listing.images.all %}
-            <div id="listingImagesCarousel" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    {% for image in listing.images.all %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ listing.title }}">
-                        </div>
-                    {% endfor %}
-                </div>
-                <a class="carousel-control-prev" href="#listingImagesCarousel" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#listingImagesCarousel" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
+        <div class="image-gallery">
+            <div class="main-image-container">
+                <img id="mainImage" src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}" class="main-image">
             </div>
+            <div class="thumbnail-container">
+                {% for image in listing.images.all %}
+                    <img src="{{ image.image.url }}" alt="{{ listing.title }}" class="thumbnail {% if forloop.first %}active{% endif %}" onclick="changeMainImage(this)">
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
+
         
         <div class="listing-price">
             Current Price: 
@@ -129,5 +137,7 @@
         </div>
 
     </div>
+
+    <script src="{% static 'auctions/js/listing_page.js' %}"></script>
 
 {% endblock %}

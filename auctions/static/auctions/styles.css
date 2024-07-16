@@ -1,4 +1,3 @@
-
 body {
     padding: 10px;
     background-color: #FFFFFF;
@@ -59,6 +58,62 @@ a {
         background-color: #816F64;
         color: #F7F4EF;
     }
+}
+
+/* Create/Edit pages css */
+.upload-button {
+    background-color: #CFBEAD;
+    width: 50%;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    margin: 12px 0;
+    float: right;
+    transition: background-color 0.3s ease;
+    &:hover {
+        background-color: #816F64;
+        color: #F7F4EF;
+    }
+}
+
+.current-image-thumbnail {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 5px;
+    border-radius: 4px;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.current-image-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.delete-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+}
+
+#current-images {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /* Hamburger menu icon color */
@@ -183,6 +238,7 @@ a {
     }
     
     .listing-details {
+        margin-top: 20px;
         margin-bottom: 20px;
     }
     
@@ -224,15 +280,41 @@ a {
 
 .carousel-item {
     text-align: center;
-    margin-bottom: 20px;
 }
 
 .carousel-item img {
-    max-width: 30%;
+    display: block;
+    margin: auto;
     height: auto;
     border-radius: 8px;
 }
 
+.carousel-control-prev,
+.carousel-control-next {
+    display: none;
+    color: #CFBEAD;
+    font-size: 2rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10%;
+    &:hover {
+        color: #816F64;
+    }
+}
+
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    display: none;
+}
 
 .comments_section {
     margin-bottom: 20px;
@@ -455,4 +537,46 @@ a {
 
 .profile-field label {
     font-weight: bold;
+}
+
+/* Listinng Page Image */
+.image-gallery {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+.main-image-container {
+    flex: 1;
+    text-align: center;
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+.thumbnail-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.thumbnail {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.thumbnail.active, .thumbnail:hover {
+    border-color: #816F64;
 }

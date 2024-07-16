@@ -14,6 +14,46 @@
             justify-content: center; 
             align-items: center;
         }
+
+        .current-image-thumbnail {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 5px;
+            border-radius: 4px;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .current-image-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .delete-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            width: 20px; 
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        #current-images {
+            display: flex;
+            flex-wrap: wrap;
+        }
     </style>
 
     <div class="new-listing-container">
@@ -44,8 +84,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="images">Upload Images:</label>
-                    <input class="form-control" type="file" name="images" multiple>
+                    <label for="images">Upload a main image:</label>
+                    <input type="file" id="id_images" name="images" multiple class="form-control">
                 </div>
                 
                 <input class="btn btn-primary" type="submit" value="Create">

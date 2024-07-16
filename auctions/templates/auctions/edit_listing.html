@@ -1,0 +1,155 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <style>
+        .edit-listing-container {
+            background-image: url('{% static "auctions/images/bck-righ-water.png" %}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            min-height: 750px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+        }
+
+        .current-image-thumbnail {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 5px;
+            border-radius: 4px;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .current-image-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .delete-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        #current-images {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+
+    <div class="edit-listing-container">
+        <div class="form-container-wide">
+            <h2>Edit Listing</h2>
+
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="id_title">Title:</label>
+                <input type="text" id="id_title" name="title" value="{{ listing.title }}" class="form-control">
+                <br>
+                <label for="id_description">Description:</label>
+                <textarea id="id_description" name="description" class="form-control" rows="3">{{ listing.description }}</textarea>
+                <br>
+                <label for="id_starting_bid">Starting Bid:</label>
+                <input type="number" id="id_starting_bid" name="starting_bid" value="{{ listing.starting_bid }}" min="0" class="form-control">
+                <br>
+                <label for="id_category">Category:</label>
+                <select id="id_category" name="category" class="form-control">
+                    <option value="" disabled>Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id == listing.category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="current-images">Current Images:</label>
+                <div id="current-images">
+                    {% for image in listing.images.all %}
+                        <div class="current-image-thumbnail">
+                            <img src="{{ image.image.url }}" alt="{{ listing.title }}">
+                            <button type="button" class="delete-image" onclick="deleteImage('{{ image.id }}')">X</button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <label for="id_images">Upload New Image:</label>
+                <input type="file" id="id_images" name="images" multiple class="form-control">
+                <button class="upload-button" type="button" onclick="addImage()">Upload Image</button>
+                <br>
+                <input class="button" type="submit" value="Update">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function deleteImage(imageId) {
+            fetch(`/edit_listing/{{ listing.id }}/?image_id=${imageId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`button[onclick="deleteImage('${imageId}')"]`).parentElement.remove();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function addImage() {
+            // Form Data Preparation:
+            var formData = new FormData();
+            var files = document.getElementById('id_images').files;
+            for (var i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
+            }
+
+            fetch(`/edit_listing/{{ listing.id }}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    var currentImagesDiv = document.getElementById('current-images');
+                    data.images.forEach(function(image) {
+                        var newImageDiv = document.createElement('div');
+                        newImageDiv.classList.add('current-image-thumbnail');
+                        newImageDiv.innerHTML = `
+                            <img src="${image.url}" alt="${image.alt}">
+                            <button type="button" class="delete-image" onclick="deleteImage('${image.id}')">X</button>
+                        `;
+                        currentImagesDiv.appendChild(newImageDiv);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+{% endblock %}

@@ -1,19 +1,23 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from .models import AuctionImage, User, AuctionListing, Bid, Comment, Category, Watchlist
 from decimal import Decimal, DecimalException, InvalidOperation
-from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import hashlib
+import hmac
+import time
+from cloudinary.uploader import upload, destroy
 
 def index(request):
     categories = Category.objects.all()
@@ -87,21 +91,14 @@ def convert_to_decimal(value):
 def create_listing(request):
     categories = Category.objects.all()
 
-    # Explicitly configure Cloudinary
-    cloudinary.config(
-        cloud_name=os.getenv('CLOUD_NAME'),
-        api_key=os.getenv('API_KEY'),
-        api_secret=os.getenv('API_SECRET')
-    )
-
     if request.method == 'POST':
         # Extract form data from the request
         title = request.POST.get('title')
         description = request.POST.get('description')
-        
+
         # Convert starting_bid to Decimal
         starting_bid = convert_to_decimal(request.POST.get('starting_bid'))
-        
+
         category_id = request.POST.get('category')
         images = request.FILES.getlist('images')
 
@@ -125,9 +122,7 @@ def create_listing(request):
             )
 
             # Save each image to Cloudinary
-            for image in images:
-                upload_result = cloudinary.uploader.upload(image)
-                AuctionImage.objects.create(listing=listing, image=upload_result['secure_url'])
+            uploaded_images = handle_image_uploads(listing, images)
 
         except IntegrityError:
             return render(request, "auctions/create_listing.html", {
@@ -139,10 +134,11 @@ def create_listing(request):
                 "message": "Selected category does not exist.",
                 "categories": categories
             })
-        
+
         return redirect('index')
 
     return render(request, 'auctions/create_listing.html', {'categories': categories})
+
 
 @login_required
 def place_bid(request, listing_id):
@@ -241,6 +237,104 @@ def listing_page(request, listing_id):
         'no_current_bid': no_current_bid,
         'no_current_bidder': no_current_bidder,
     })
+
+def handle_image_uploads(listing, images):
+    uploaded_images = []
+    for image in images:
+        cloudinary_response = cloudinary.uploader.upload(image)
+        image_url = cloudinary_response['url']
+        auction_image = AuctionImage.objects.create(listing=listing, image=image_url)
+        uploaded_images.append(auction_image)
+    return uploaded_images
+
+def delete_image_from_cloudinary(image):
+    public_id = image.image.public_id
+    timestamp = int(time.time())
+    params_to_sign = f'public_id={public_id}&timestamp={timestamp}'
+    signature = hmac.new(
+        bytes(os.getenv('API_SECRET'), 'latin-1'),
+        msg=params_to_sign.encode('utf-8'),
+        digestmod=hashlib.sha1
+    ).hexdigest()
+
+    cloudinary.uploader.destroy(public_id, api_key=os.getenv('API_KEY'), api_secret=os.getenv('API_SECRET'), signature=signature, timestamp=timestamp)
+    image.delete()
+
+def update_listing_fields(listing, title, description, category_id):
+    listing.title = title
+    listing.description = description
+    listing.category = Category.objects.get(id=category_id)
+    listing.save()
+
+def validate_form_fields(title, description, category_id):
+    return bool(title and description and category_id)
+
+@login_required
+@csrf_exempt
+def edit_listing(request, listing_id):
+    listing = get_object_or_404(AuctionListing, id=listing_id)
+
+    if request.method == 'POST':
+        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+            return handle_form_submission(request, listing)
+        else:
+            return handle_ajax_image_upload(request, listing)
+
+    elif request.method == 'DELETE':
+        return handle_image_deletion(request)
+
+    categories = Category.objects.all()
+    return render(request, 'auctions/edit_listing.html', {
+        'listing': listing,
+        'categories': categories
+    })
+
+def handle_form_submission(request, listing):
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    category_id = request.POST.get('category')
+    images = request.FILES.getlist('images')
+
+    if not validate_form_fields(title, description, category_id):
+        categories = Category.objects.all()
+        return render(request, 'auctions/edit_listing.html', {
+            'listing': listing,
+            'categories': categories,
+            'message': 'Please fill out all required fields.'
+        })
+
+    try:
+        update_listing_fields(listing, title, description, category_id)
+
+        if images:
+            handle_image_uploads(listing, images)
+
+        messages.success(request, 'Your listing was successfully updated!')
+        return redirect('listing_page', listing_id=listing.id)
+
+    except IntegrityError:
+        messages.error(request, 'There was an error updating the listing.')
+        categories = Category.objects.all()
+        return render(request, 'auctions/edit_listing.html', {
+            'listing': listing,
+            'categories': categories,
+            'message': 'There was an error updating the listing.'
+        })
+
+def handle_ajax_image_upload(request, listing):
+    images = request.FILES.getlist('images')
+    new_images = handle_image_uploads(listing, images)
+    new_images_data = [{'id': image.id, 'url': image.image, 'alt': listing.title} for image in new_images]
+    return JsonResponse({'success': True, 'images': new_images_data})
+
+def handle_image_deletion(request):
+    image_id = request.GET.get('image_id')
+    try:
+        image = AuctionImage.objects.get(id=image_id)
+        delete_image_from_cloudinary(image)
+        return JsonResponse({'success': True})
+    except AuctionImage.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Image not found'}, status=404)
 
 @login_required
 def show_watchlist(request):
