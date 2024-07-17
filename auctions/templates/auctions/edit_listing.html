@@ -72,7 +72,8 @@
                 <textarea id="id_description" name="description" class="form-control" rows="3">{{ listing.description }}</textarea>
                 <br>
                 <label for="id_starting_bid">Starting Bid:</label>
-                <input type="number" id="id_starting_bid" name="starting_bid" value="{{ listing.starting_bid }}" min="0" class="form-control">
+                <div id="id_starting_bid">{{ listing.starting_bid }}
+                </div>
                 <br>
                 <label for="id_category">Category:</label>
                 <select id="id_category" name="category" class="form-control">

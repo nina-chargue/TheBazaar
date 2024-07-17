@@ -99,7 +99,6 @@ def convert_to_decimal(value):
     except (ValueError, TypeError, DecimalException):
         return None
     
-@login_required
 def create_listing(request):
     """
     Handle creation of a new auction listing.
@@ -110,13 +109,11 @@ def create_listing(request):
         # Extract form data from the request
         title = request.POST.get('title')
         description = request.POST.get('description')
-
-        # Convert starting_bid to Decimal
         starting_bid = convert_to_decimal(request.POST.get('starting_bid'))
-
         category_id = request.POST.get('category')
         images = request.FILES.getlist('images')
 
+        # Validate form data
         if not title or not description or starting_bid is None or not category_id:
             return render(request, "auctions/create_listing.html", {
                 "message": "Please fill out all required fields.",
@@ -139,6 +136,9 @@ def create_listing(request):
             # Save each image to Cloudinary
             uploaded_images = handle_image_uploads(listing, images)
 
+            # Redirect to the index page after successful creation
+            return redirect('index')
+
         except IntegrityError:
             return render(request, "auctions/create_listing.html", {
                 "message": "Title already taken.",
@@ -149,8 +149,13 @@ def create_listing(request):
                 "message": "Selected category does not exist.",
                 "categories": categories
             })
-
-        return redirect('index')
+        except Exception as e:
+            # Handle other exceptions (e.g., Cloudinary upload failure)
+            print(f"Failed to create listing: {str(e)}")
+            return render(request, "auctions/create_listing.html", {
+                "message": "Failed to create listing. Please try again later.",
+                "categories": categories
+            })
 
     return render(request, 'auctions/create_listing.html', {'categories': categories})
 
@@ -279,13 +284,13 @@ def handle_image_uploads(listing, images):
         try:
             # Upload image to Cloudinary
             cloudinary_response = cloudinary.uploader.upload(image)
-            image_url = cloudinary_response['url']
+            image_url = cloudinary_response['secure_url']  # Use secure_url for HTTPS
             
             # Create AuctionImage instance linking it to the listing
             auction_image = AuctionImage.objects.create(listing=listing, image=image_url)
             uploaded_images.append({
                 'id': auction_image.id,
-                'url': image_url,  # Assuming image_url is the Cloudinary URL
+                'url': image_url,
                 'alt': listing.title
             })
         except Exception as e:
