@@ -67,12 +67,14 @@ a {
     color: white;
     border: none;
     padding: 3px 8px;
-    margin: 12px 0;
+    margin: 12px 0 32px 0;
     float: right;
     transition: background-color 0.3s ease;
+    border-radius: 4px;
     &:hover {
         background-color: #816F64;
         color: #F7F4EF;
+        border-radius: none;
     }
 }
 

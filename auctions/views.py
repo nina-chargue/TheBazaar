@@ -20,6 +20,10 @@ import time
 from cloudinary.uploader import upload, destroy
 
 def index(request):
+    """
+    Renders all categories and active auction listings. And filters 
+    active listings by category based on request parameters.
+    """
     categories = Category.objects.all()
     active_listings = AuctionListing.objects.filter(state='Active')
 
@@ -29,10 +33,11 @@ def index(request):
 
     return render(request, 'auctions/index.html', {'active_listings': active_listings, 'categories': categories, 'category_filter': category_filter})
 
-
 def login_view(request):
+    """
+    Handle user login.
+    """
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -49,13 +54,17 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
 def logout_view(request):
+    """
+    Log out the currently authenticated user and redirect to the index page.
+    """
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
 def register(request):
+    """
+    Handle user registration.
+    """
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
@@ -82,6 +91,9 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def convert_to_decimal(value):
+    """
+    Convert a given value to Decimal.
+    """
     try:
         return Decimal(value)
     except (ValueError, TypeError, DecimalException):
@@ -89,6 +101,9 @@ def convert_to_decimal(value):
     
 @login_required
 def create_listing(request):
+    """
+    Handle creation of a new auction listing.
+    """
     categories = Category.objects.all()
 
     if request.method == 'POST':
@@ -139,9 +154,11 @@ def create_listing(request):
 
     return render(request, 'auctions/create_listing.html', {'categories': categories})
 
-
 @login_required
 def place_bid(request, listing_id):
+    """
+    Handle placing a bid on an auction listing.
+    """
     if request.method == 'POST':
         bid_amount = request.POST.get('bid')
         listing = get_object_or_404(AuctionListing, pk=listing_id)
@@ -169,6 +186,9 @@ def place_bid(request, listing_id):
 
 @login_required
 def add_to_watchlist(request, listing_id):
+    """
+    Handle adding an auction listing to the user's watchlist.
+    """
     if request.method == 'POST':
         listing = get_object_or_404(AuctionListing, pk=listing_id)
         if request.user.watchlist.filter(listing=listing).exists():
@@ -183,6 +203,9 @@ def add_to_watchlist(request, listing_id):
 
 @login_required
 def remove_from_watchlist(request, listing_id):
+    """
+    Handle removing an auction listing from the user's watchlist.
+    """
     if request.method == 'POST':
         listing = get_object_or_404(AuctionListing, pk=listing_id)
         # Remove the listing from the user's watchlist if it exists
@@ -192,6 +215,9 @@ def remove_from_watchlist(request, listing_id):
 
 @login_required
 def add_comment(request, listing_id):
+    """
+    Handle adding a comment to an auction listing.
+    """
     listing = get_object_or_404(AuctionListing, pk=listing_id)
     if request.method == 'POST':
         comment_text = request.POST.get('content')
@@ -205,6 +231,9 @@ def add_comment(request, listing_id):
 
 @login_required
 def close_auction(request, listing_id):
+    """
+    Handle closing an auction listing.
+    """
     listing = get_object_or_404(AuctionListing, pk=listing_id)
     if request.method == 'POST':
         if request.user == listing.creator:
@@ -216,6 +245,9 @@ def close_auction(request, listing_id):
     return redirect('listing_page', listing_id=listing_id)
 
 def listing_page(request, listing_id):
+    """
+    Handle displaying an auction listing page.
+    """
     listing = get_object_or_404(AuctionListing, pk=listing_id)
     has_won = listing.state == 'Closed' and listing.current_bidder == request.user
     in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists() if request.user.is_authenticated else False
@@ -239,50 +271,90 @@ def listing_page(request, listing_id):
     })
 
 def handle_image_uploads(listing, images):
+    """
+    Handles uploading images to Cloudinary and associating them with a listing
+    """
     uploaded_images = []
     for image in images:
-        cloudinary_response = cloudinary.uploader.upload(image)
-        image_url = cloudinary_response['url']
-        auction_image = AuctionImage.objects.create(listing=listing, image=image_url)
-        uploaded_images.append(auction_image)
+        try:
+            # Upload image to Cloudinary
+            cloudinary_response = cloudinary.uploader.upload(image)
+            image_url = cloudinary_response['url']
+            
+            # Create AuctionImage instance linking it to the listing
+            auction_image = AuctionImage.objects.create(listing=listing, image=image_url)
+            uploaded_images.append({
+                'id': auction_image.id,
+                'url': image_url,  # Assuming image_url is the Cloudinary URL
+                'alt': listing.title
+            })
+        except Exception as e:
+            # Handle upload failure gracefully
+            print(f"Failed to upload image: {str(e)}")
     return uploaded_images
 
 def delete_image_from_cloudinary(image):
-    public_id = image.image.public_id
-    timestamp = int(time.time())
-    params_to_sign = f'public_id={public_id}&timestamp={timestamp}'
-    signature = hmac.new(
-        bytes(os.getenv('API_SECRET'), 'latin-1'),
-        msg=params_to_sign.encode('utf-8'),
-        digestmod=hashlib.sha1
-    ).hexdigest()
-
-    cloudinary.uploader.destroy(public_id, api_key=os.getenv('API_KEY'), api_secret=os.getenv('API_SECRET'), signature=signature, timestamp=timestamp)
-    image.delete()
+    """
+    Deletes an image from Cloudinary and its associated AuctionImage instance
+    """
+    try:
+        # Extract public_id and timestamp for deletion signature
+        public_id = image.image.public_id
+        timestamp = int(time.time())
+        params_to_sign = f'public_id={public_id}&timestamp={timestamp}'
+        
+        # Generate signature for deletion request
+        signature = hmac.new(
+            bytes(os.getenv('API_SECRET'), 'latin-1'),
+            msg=params_to_sign.encode('utf-8'),
+            digestmod=hashlib.sha1
+        ).hexdigest()
+        
+        # Delete image from Cloudinary using generated signature
+        cloudinary.uploader.destroy(public_id, api_key=os.getenv('API_KEY'), api_secret=os.getenv('API_SECRET'), signature=signature, timestamp=timestamp)
+        
+        # Delete AuctionImage instance from database
+        image.delete()
+    except Exception as e:
+        # Handle deletion failure gracefully
+        print(f"Failed to delete image: {str(e)}")
 
 def update_listing_fields(listing, title, description, category_id):
+    """
+    Updates fields (title, description, category) of a listing instance
+    """
     listing.title = title
     listing.description = description
     listing.category = Category.objects.get(id=category_id)
     listing.save()
 
 def validate_form_fields(title, description, category_id):
+    """
+    Validates that required form fields (title, description, category_id) are not empty
+    """
     return bool(title and description and category_id)
 
 @login_required
 @csrf_exempt
 def edit_listing(request, listing_id):
+    """
+    Handles the submission of form data for updating a listing
+    """
     listing = get_object_or_404(AuctionListing, id=listing_id)
 
     if request.method == 'POST':
-        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-            return handle_form_submission(request, listing)
-        else:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # AJAX image upload request
             return handle_ajax_image_upload(request, listing)
+        else:
+            # Regular form submission
+            return handle_form_submission(request, listing)
 
     elif request.method == 'DELETE':
+        # Image deletion request
         return handle_image_deletion(request)
 
+    # Fetches all categories for rendering the form
     categories = Category.objects.all()
     return render(request, 'auctions/edit_listing.html', {
         'listing': listing,
@@ -290,11 +362,15 @@ def edit_listing(request, listing_id):
     })
 
 def handle_form_submission(request, listing):
+    """
+    Handles form submission for updating a listing
+    """
     title = request.POST.get('title')
     description = request.POST.get('description')
     category_id = request.POST.get('category')
     images = request.FILES.getlist('images')
 
+    # Validate form fields
     if not validate_form_fields(title, description, category_id):
         categories = Category.objects.all()
         return render(request, 'auctions/edit_listing.html', {
@@ -304,15 +380,19 @@ def handle_form_submission(request, listing):
         })
 
     try:
+        # Update listing fields
         update_listing_fields(listing, title, description, category_id)
 
+        # Handle image uploads if any
         if images:
             handle_image_uploads(listing, images)
 
+        # Redirect to listing page on success
         messages.success(request, 'Your listing was successfully updated!')
         return redirect('listing_page', listing_id=listing.id)
 
     except IntegrityError:
+        # Handle integrity errors (e.g., database constraints violated)
         messages.error(request, 'There was an error updating the listing.')
         categories = Category.objects.all()
         return render(request, 'auctions/edit_listing.html', {
@@ -322,22 +402,32 @@ def handle_form_submission(request, listing):
         })
 
 def handle_ajax_image_upload(request, listing):
+    """
+    Handles AJAX image uploads for a listing
+    """
     images = request.FILES.getlist('images')
-    new_images = handle_image_uploads(listing, images)
-    new_images_data = [{'id': image.id, 'url': image.image, 'alt': listing.title} for image in new_images]
+    new_images_data = handle_image_uploads(listing, images)
     return JsonResponse({'success': True, 'images': new_images_data})
 
 def handle_image_deletion(request):
+    """
+    Handles deletion of an image associated with a listing
+    """
     image_id = request.GET.get('image_id')
     try:
+        # Retrieve and delete AuctionImage instance
         image = AuctionImage.objects.get(id=image_id)
         delete_image_from_cloudinary(image)
         return JsonResponse({'success': True})
     except AuctionImage.DoesNotExist:
+        # Handle case where image does not exist
         return JsonResponse({'success': False, 'error': 'Image not found'}, status=404)
 
 @login_required
 def show_watchlist(request):
+    """
+    Show watchlist page
+    """
     watchlist_listings = request.user.watchlist.all()
     
     # Print listings information to console
@@ -349,6 +439,9 @@ def show_watchlist(request):
 
 @login_required
 def show_closed_auctions(request):
+    """
+    Show closed auctions page
+    """
     closed_listings = AuctionListing.objects.filter(state='Closed')
     context = {
         'closed_listings': closed_listings
@@ -357,6 +450,9 @@ def show_closed_auctions(request):
 
 @login_required
 def update_profile(request):
+    """
+    Update user profile
+    """
     user = request.user
     
     if request.method == 'POST':
@@ -374,6 +470,9 @@ def update_profile(request):
 
 @login_required
 def change_password(request):
+    """
+    Change user password
+    """
     user = request.user
     
     if request.method == 'POST':
@@ -390,6 +489,9 @@ def change_password(request):
 
 @login_required
 def edit_profile(request):
+    """
+    Edit user profile
+    """
     if request.method == 'POST':
         if 'save_profile' in request.POST:
             return update_profile(request)
@@ -402,6 +504,9 @@ def edit_profile(request):
     return render(request, 'auctions/edit_profile.html', {'user': user, 'password_form': password_form})
 
 def user_profile(request, user_id):
+    """
+    User profile page
+    """
     user = get_object_or_404(User, id=user_id)
     context = {
         'profile_user': user,
@@ -411,6 +516,9 @@ def user_profile(request, user_id):
     return render(request, 'auctions/profile.html', context)
 
 def creator_profile(request, creator_id):
+    """
+    Creator profile page
+    """
     creator = get_object_or_404(User, id=creator_id)
     context = {
         'profile_user': creator,

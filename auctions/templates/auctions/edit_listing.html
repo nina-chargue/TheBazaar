@@ -121,23 +121,26 @@
         function addImage() {
             // Form Data Preparation:
             var formData = new FormData();
-            var files = document.getElementById('id_images').files;
+            var files = document.getElementById('id_images').files;  // Get selected files from input
             for (var i = 0; i < files.length; i++) {
-                formData.append('images', files[i]);
+                formData.append('images', files[i]);  // Append each file to FormData object with key 'images'
             }
 
+            // AJAX Fetch Request:
             fetch(`/edit_listing/{{ listing.id }}/`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for authentication
+                    'X-Requested-With': 'XMLHttpRequest'  // Mark request as AJAX
                 },
-                body: formData
+                body: formData  // Attach FormData object containing image files
             })
-            .then(response => response.json())
+            .then(response => response.json())  // Parse response as JSON
             .then(data => {
+                // Handle JSON response data:
                 if (data.success) {
                     var currentImagesDiv = document.getElementById('current-images');
+                    // Iterate over uploaded images and create HTML elements for each:
                     data.images.forEach(function(image) {
                         var newImageDiv = document.createElement('div');
                         newImageDiv.classList.add('current-image-thumbnail');
@@ -145,11 +148,15 @@
                             <img src="${image.url}" alt="${image.alt}">
                             <button type="button" class="delete-image" onclick="deleteImage('${image.id}')">X</button>
                         `;
-                        currentImagesDiv.appendChild(newImageDiv);
+                        currentImagesDiv.appendChild(newImageDiv);  // Append new image div to existing images container
                     });
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error));  // Log any errors that occur during fetch request
         }
+
+        document.getElementById('upload-button').addEventListener('click', function() {
+        addImage();
+        });
     </script>
 {% endblock %}
