@@ -435,12 +435,11 @@ def show_watchlist(request):
     """
     watchlist_listings = request.user.watchlist.all()
     
-    # Print listings information to console
     for watchlist_item in watchlist_listings:
         listing = watchlist_item.listing
-        print(f"Title: {listing.title}, Description: {listing.description}, Current Bid: {listing.current_bid}, Image URL: {listing.image_url}")
 
     return render(request, 'auctions/watchlist.html', {'watchlist_listings': watchlist_listings})
+
 
 @login_required
 def show_closed_auctions(request):

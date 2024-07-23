@@ -128,6 +128,7 @@ a {
 .listing-row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .no-listing-container {
@@ -153,6 +154,12 @@ a {
     background-color: #F7F4EF;
 }
 
+@media (max-width: 768px) { 
+    .listing-container {
+        width: calc(50% - 20px);
+    }
+}
+
 .listing-container img {
     max-width: 100%;
     max-height: 200px;
@@ -164,7 +171,7 @@ a {
 .filter-nav {
     overflow-x: auto;
     white-space: nowrap;
-    width: 100%; /* Ensure the filter-nav takes the full width */
+    width: 100%;
     margin-top: 20px;
     /* -ms-overflow-style: none; IE and Edge */
     scrollbar-width: 1px; /* Firefox */
@@ -179,7 +186,7 @@ a {
     list-style: none;
     padding: 0;
     margin: 0;
-    width: max-content; /* Ensures the container stretches to fit its content */
+    width: max-content;
 }
   
 .filters-container li {
@@ -191,19 +198,19 @@ a {
     display: inline-block;
     border: none;
     background-color: transparent;
-    color: #333; /* Example color */
+    color: #333;
     font-size: 15px;
     line-height: 23px;
     padding: 0px 12px 10px 12px;
-    white-space: nowrap; /* Ensure text does not wrap */
+    white-space: nowrap; 
 }
   
 .category-filter:focus,
 .category-filter:active,
 .category-filter.active {
-    border-bottom: 2px solid #816f64; /* Example color */
+    border-bottom: 2px solid #816f64;
     outline: none;
-    color: #816f64; /* Example color */
+    color: #816f64;
 }
   
 .filters-container li::marker {
@@ -258,13 +265,14 @@ a {
 .listing-information {
     margin: 0 auto;
     width: 80%;
-    padding: 20px;
-    /* background-color: #F7F4EF; */
-    border-radius: 12px;
 }
 
 .listing-title {
     font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-top: 10px;
     a {
         color: #000;
@@ -272,7 +280,14 @@ a {
 }
 
 .listing-description {
-    font-size: 10px;
+    font-size: 12px;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 4.5em; 
+    line-height: 1.5em;
 }
 
 .listing-price {
@@ -524,7 +539,7 @@ a {
 }
 
 .profile-details {
-    width: 100%; /* or any specific width you need */
+    width: 100%; 
     height: 300px;
     display: flex;
     flex-direction: column;
@@ -534,7 +549,7 @@ a {
 
 .profile-field {
     text-align: left;
-    margin-bottom: 20px; /* space between fields */
+    margin-bottom: 20px; 
 }
 
 .profile-field label {
