@@ -128,7 +128,7 @@ a {
 .listing-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 
 .no-listing-container {
@@ -152,6 +152,9 @@ a {
     padding: 15px;
     box-sizing: border-box;
     background-color: #F7F4EF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 @media (max-width: 768px) { 
@@ -315,6 +318,13 @@ a {
 .listing-price {
     font-size: 15px;
     margin-top: 4px;
+}
+
+.carousel {
+    min-height: 200px;
+    max-height: 200px;
+    display: flex;
+    align-items: center;
 }
 
 .carousel-item {

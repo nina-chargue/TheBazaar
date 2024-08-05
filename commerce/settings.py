@@ -89,12 +89,11 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 
-        # AZURE DB CONNECTION
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
+        "NAME": "the-bazaar",
         "USER": "nina_chargue",
         "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": "the-bazaar-bd.postgres.database.azure.com",
+        "HOST": "personal-server.postgres.database.azure.com",
         "PORT": "5432",
         "OPTIONS":{"sslmode": "require"},
     }
