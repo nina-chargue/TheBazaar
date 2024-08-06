@@ -1,6 +1,8 @@
 #  The Bazaar
 A commerce app designed for auctions, where users can create profiles to either list items for auction or bid on others' listings. The app provides a dynamic and interactive platform for users to engage in buying and selling through auctions. Below is a detailed description of the features and functionalities of The Bazaar.
 
+## [View the website](https://the-bazaar.azurewebsites.net/)
+
 ## Features
 
 - User Authentication
