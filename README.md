@@ -42,8 +42,9 @@ This project was developed while taking the Harvard virtual class CS50's Web Pro
 1. Clone the repository: git clone https://github.com/your_username/thebazaar.git
 2. Navigate to the project directory.
 3. Install dependencies: pip install -r requirements.txt
-4. Run the Django application: python app.py / python managepy runserver
-5. Open your web browser and go to http://localhost:5000 to start using The Bazaar.
+4. Change the database connection in the setting.py file to sqlite3. (Uncooment lines 88-89 and comment lines 91-97)
+5. Run the Django application: python app.py / python managepy runserver
+6. Open your web browser and go to http://localhost:5000 to start using The Bazaar.
 
 ## Demonstrative Video 
 https://www.youtube.com/watch?v=is8PS5UrMyY
