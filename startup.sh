@@ -1,1 +1,0 @@
-python manage.py collecstatic && gunicorn --workers 2 commerce.wsgi
