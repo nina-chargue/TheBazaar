@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['the-bazaar.azurewebsites.net', '*']
+ALLOWED_HOSTS = ['the-bazaar.azurewebsites.net', 'https://8mzasiy9ib.us-east-2.awsapprunner.com', '*']
 
 
 # Application definition
