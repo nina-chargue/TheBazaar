@@ -1,0 +1,41 @@
+@import url("components/buttons.69288911910e.css");
+@import url("components/filter.9995619e6660.css");
+@import url("components/forms.945a3373890c.css");
+@import url("components/navigation.fba528973df4.css");
+
+@import url("pages/images-create-edit.45bd5076832e.css");
+@import url("pages/listing-comments.775e77bd19df.css");
+@import url("pages/listing-gallery.28d7341d2aca.css");
+@import url("pages/listing.d47ee53cc620.css");
+@import url("pages/profile.8637623e300f.css");
+@import url("pages/store.ab035581967a.css");
+
+body {
+  padding: 10px;
+  background-color: #ffffff;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  padding: 20px 0;
+}
+
+footer {
+  background-color: #ffffff;
+  padding: 10px 0;
+}
+
+footer a {
+  color: #333;
+  text-decoration: none;
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+a {
+  text-decoration: none;
+  text-decoration-line: none;
+}

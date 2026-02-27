@@ -1,0 +1,81 @@
+/* Buttons */
+
+.button {
+  background-color: #cfbead;
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #816f64;
+  color: #f7f4ef;
+}
+
+/* Hamburger menu icon color */
+.navbar-toggler-icon {
+  color: #cfbead;
+}
+
+.btn-primary {
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #111;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  background-color: #f7f4ef;
+  color: black;
+}
+
+.btn-outline {
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 0 12px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #111;
+}
+
+.btn-outline:hover {
+  border-color: #111;
+}
+
+.full {
+  width: 100%;
+}
+
+/* Notice box */
+.notice {
+  font-size: 14px;
+  color: #555;
+  background: #f7f7f7;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.notice a {
+  color: #111;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.notice a:hover {
+  text-decoration: underline;
+}
+
+/* Messages */
+.message-stack .alert {
+  margin: 0;
+}
