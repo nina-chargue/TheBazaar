@@ -1,0 +1,41 @@
+@import url("components/buttons.css");
+@import url("components/filter.css");
+@import url("components/forms.css");
+@import url("components/navigation.css");
+
+@import url("pages/images-create-edit.css");
+@import url("pages/listing-comments.css");
+@import url("pages/listing-gallery.css");
+@import url("pages/listing.css");
+@import url("pages/profile.css");
+@import url("pages/store.css");
+
+body {
+  padding: 10px;
+  background-color: #ffffff;
+  font-family: Arial, sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  padding: 20px 0;
+}
+
+footer {
+  background-color: #ffffff;
+  padding: 10px 0;
+}
+
+footer a {
+  color: #333;
+  text-decoration: none;
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+a {
+  text-decoration: none;
+  text-decoration-line: none;
+}

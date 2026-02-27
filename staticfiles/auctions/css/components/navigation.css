@@ -1,0 +1,37 @@
+.text-center {
+  background-color: #f7f4ef;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.logo-left {
+  margin-bottom: 5px;
+  margin-right: 10px;
+}
+
+.logo-right {
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+.button {
+  background-color: #cfbead;
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #816f64;
+  color: #f7f4ef;
+}
+
+/* Hamburger menu icon color */
+.navbar-toggler-icon {
+  color: #cfbead;
+}

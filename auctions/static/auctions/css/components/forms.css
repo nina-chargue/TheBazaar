@@ -1,0 +1,65 @@
+/* Bid form (legacy selectors) */
+
+.bid_form {
+  margin-top: 20px;
+}
+
+.bid_form .form-group {
+  margin-bottom: 10px;
+}
+
+.bid_form input[type="number"] {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+/* Close auction button (legacy selectors) */
+.close_auction_button {
+  margin-top: 20px;
+}
+
+.close_auction_button input[type="submit"] {
+  background-color: #6c0345;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close_auction_button input[type="submit"]:hover {
+  background-color: #dc6b19;
+}
+
+.link-here a {
+  color: #6a5348;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.register-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-details {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.profile-field {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.profile-field label {
+  font-weight: bold;
+}
